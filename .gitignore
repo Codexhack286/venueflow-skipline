@@ -35,5 +35,10 @@ env/
 .DS_Store
 Thumbs.db
 
-# Project Specific
+# CV Demo (local only — heavy files)
+cv_demo/venv/
 cv_demo/output/
+cv_demo/*.pt
+cv_demo/*.mp4
+cv_demo/*.avi
+cv_demo/*.mov
