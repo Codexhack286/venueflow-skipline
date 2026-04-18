@@ -1,0 +1,102 @@
+[
+  {
+    "frame_id": 1,
+    "timestamp_sec": 0,
+    "event_minute": 5,
+    "zone_counts": {
+      "gate_a": 1450, "gate_b": 1320, "gate_c": 980, "gate_d": 1100,
+      "concession_1": 52, "concession_2": 48, "concession_3": 35, "concession_4": 41,
+      "section_north": 1200, "section_east": 980, "section_south": 1100, "section_west": 870
+    }
+  },
+  {
+    "frame_id": 2,
+    "timestamp_sec": 30,
+    "event_minute": 15,
+    "zone_counts": {
+      "gate_a": 1820, "gate_b": 1690, "gate_c": 1560, "gate_d": 1480,
+      "concession_1": 78, "concession_2": 65, "concession_3": 58, "concession_4": 72,
+      "section_north": 2800, "section_east": 2400, "section_south": 2600, "section_west": 2200
+    }
+  },
+  {
+    "frame_id": 3,
+    "timestamp_sec": 60,
+    "event_minute": 45,
+    "zone_counts": {
+      "gate_a": 320, "gate_b": 280, "gate_c": 250, "gate_d": 210,
+      "concession_1": 145, "concession_2": 130, "concession_3": 110, "concession_4": 125,
+      "section_north": 4200, "section_east": 3800, "section_south": 4100, "section_west": 3600
+    }
+  },
+  {
+    "frame_id": 4,
+    "timestamp_sec": 90,
+    "event_minute": 90,
+    "zone_counts": {
+      "gate_a": 180, "gate_b": 150, "gate_c": 140, "gate_d": 120,
+      "concession_1": 185, "concession_2": 170, "concession_3": 150, "concession_4": 160,
+      "section_north": 4600, "section_east": 4100, "section_south": 4500, "section_west": 4000
+    }
+  },
+  {
+    "frame_id": 5,
+    "timestamp_sec": 120,
+    "event_minute": 120,
+    "zone_counts": {
+      "gate_a": 150, "gate_b": 130, "gate_c": 120, "gate_d": 110,
+      "concession_1": 280, "concession_2": 310, "concession_3": 260, "concession_4": 290,
+      "section_north": 3800, "section_east": 3400, "section_south": 3700, "section_west": 3200
+    }
+  },
+  {
+    "frame_id": 6,
+    "timestamp_sec": 150,
+    "event_minute": 130,
+    "zone_counts": {
+      "gate_a": 200, "gate_b": 170, "gate_c": 160, "gate_d": 145,
+      "concession_1": 445, "concession_2": 460, "concession_3": 395, "concession_4": 420,
+      "section_north": 3200, "section_east": 2900, "section_south": 3100, "section_west": 2700
+    }
+  },
+  {
+    "frame_id": 7,
+    "timestamp_sec": 180,
+    "event_minute": 150,
+    "zone_counts": {
+      "gate_a": 140, "gate_b": 120, "gate_c": 110, "gate_d": 100,
+      "concession_1": 220, "concession_2": 200, "concession_3": 180, "concession_4": 195,
+      "section_north": 4400, "section_east": 3900, "section_south": 4300, "section_west": 3800
+    }
+  },
+  {
+    "frame_id": 8,
+    "timestamp_sec": 210,
+    "event_minute": 180,
+    "zone_counts": {
+      "gate_a": 160, "gate_b": 140, "gate_c": 130, "gate_d": 115,
+      "concession_1": 165, "concession_2": 150, "concession_3": 135, "concession_4": 145,
+      "section_north": 4500, "section_east": 4000, "section_south": 4400, "section_west": 3900
+    }
+  },
+  {
+    "frame_id": 9,
+    "timestamp_sec": 240,
+    "event_minute": 215,
+    "zone_counts": {
+      "gate_a": 1650, "gate_b": 1520, "gate_c": 1380, "gate_d": 1290,
+      "concession_1": 85, "concession_2": 75, "concession_3": 60, "concession_4": 70,
+      "section_north": 2800, "section_east": 2400, "section_south": 2600, "section_west": 2200
+    }
+  },
+  {
+    "frame_id": 10,
+    "timestamp_sec": 270,
+    "event_minute": 235,
+    "zone_counts": {
+      "gate_a": 1780, "gate_b": 1650, "gate_c": 1500, "gate_d": 1420,
+      "concession_1": 30, "concession_2": 25, "concession_3": 20, "concession_4": 22,
+      "section_north": 800, "section_east": 650, "section_south": 750, "section_west": 580
+    }
+  }
+]

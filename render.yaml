@@ -1,0 +1,16 @@
+# Render.com deployment config
+# https://docs.render.com/deploy-a-python-fastapi-application
+
+services:
+  - type: web
+    name: venueflow-api
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: "pip install uv && uv sync --frozen --no-dev"
+    startCommand: "uv run uvicorn main:app --host 0.0.0.0 --port $PORT"
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false
+      - key: PYTHON_VERSION
+        value: "3.12"
