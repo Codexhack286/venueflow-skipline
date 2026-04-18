@@ -89,12 +89,13 @@ export default function DashboardPage() {
 
   // Auto-advance time
   useEffect(() => {
+    localStorage.setItem("venueflow_minute", minute);
     if (!playing) return;
     const interval = setInterval(() => {
       setMinute((prev) => (prev >= EVENT_DURATION - 1 ? 0 : prev + 1));
     }, 1000 / speed);
     return () => clearInterval(interval);
-  }, [playing, speed]);
+  }, [playing, speed, minute]);
 
   // Stats
   const avgDensity = Object.values(densities).length

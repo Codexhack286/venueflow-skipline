@@ -93,7 +93,7 @@ export default function SkipLineAlert({ alerts = [], onPreOrder }) {
             <div className="flex items-center justify-between">
               {alert.cta && (
                 <button
-                  onClick={() => onPreOrder && onPreOrder(alert.zone_id)}
+                  onClick={() => onPreOrder && onPreOrder(alert)}
                   className="text-xs font-semibold px-3 py-1.5 rounded-lg gradient-accent text-white hover:opacity-90 transition-opacity"
                 >
                   {alert.cta} →

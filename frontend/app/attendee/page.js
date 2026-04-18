@@ -57,11 +57,14 @@ export default function AttendeePage() {
     return () => clearInterval(interval);
   }, [minute, poll]);
 
-  // Auto-advance
+  // Synchronize time with Operator Dashboard via localStorage
   useEffect(() => {
-    const interval = setInterval(() => {
-      setMinute((prev) => (prev >= EVENT_DURATION - 1 ? 0 : prev + 1));
-    }, 1000);
+    const syncTime = () => {
+      const stored = localStorage.getItem("venueflow_minute");
+      if (stored) setMinute(parseInt(stored, 10));
+    };
+    syncTime(); // initial sync
+    const interval = setInterval(syncTime, 1000);
     return () => clearInterval(interval);
   }, []);
 
@@ -141,7 +144,16 @@ export default function AttendeePage() {
             <h3 className="text-sm font-semibold text-white mb-3 flex items-center gap-2">
               ⚡ Live SkipLine Alerts
             </h3>
-            <SkipLineAlert alerts={alerts} />
+            <SkipLineAlert 
+              alerts={alerts} 
+              onPreOrder={(alert) => {
+                if (alert.cta && alert.cta.includes("Route")) {
+                  setTab("map");
+                } else {
+                  setTab("order");
+                }
+              }}
+            />
           </div>
         )}
       </div>

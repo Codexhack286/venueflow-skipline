@@ -90,7 +90,7 @@ VENUE_TYPE = "stadium"
 # ============================================================================
 
 # Model to use for agentic operations
-GROQ_MODEL = "llama-3.3-70b-versatile"
+GROQ_MODEL = "llama-3.1-8b-instant"
 
 # Maximum tokens for LLM response
 GROQ_MAX_TOKENS = 1024
