@@ -31,10 +31,12 @@ export default function SkipLineAlert({ alerts = [], onPreOrder }) {
     return () => timers.forEach((t) => t && clearTimeout(t));
   }, [alerts]);
 
-  // Reset dismissed when alerts change significantly
+  // Reset dismissed when the actual set of alerts changes
+  const alertKey = alerts.map((a) => `${a.zone_id}:${a.severity}`).join("|");
   useEffect(() => {
     setDismissedIds(new Set());
-  }, [alerts.length]);
+    setAnimatingOut(new Set());
+  }, [alertKey]);
 
   const visibleAlerts = alerts.filter((a) => {
     const key = `${a.zone_id}-${a.title}`;

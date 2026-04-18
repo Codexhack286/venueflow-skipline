@@ -100,7 +100,6 @@ export default function DashboardPage() {
   const avgDensity = Object.values(densities).length
     ? Object.values(densities).reduce((a, b) => a + b, 0) / Object.values(densities).length
     : 0;
-  const maxZone = Object.entries(densities).sort((a, b) => b[1] - a[1])[0];
   const totalWait = waitTimes.reduce((sum, w) => sum + w.wait_minutes, 0);
   const avgWait = waitTimes.length ? totalWait / waitTimes.length : 0;
 
