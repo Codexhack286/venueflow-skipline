@@ -5,6 +5,7 @@ Uses Groq function calling with llama-3.3-70b.
 """
 
 import json
+import re
 from groq_agent.client import chat, chat_with_tools
 from simulation.engine import get_density
 from simulation.anomaly_detector import detect_anomalies
@@ -85,13 +86,43 @@ def _execute_tool(tool_name: str, minute: int) -> str:
     return json.dumps(result, indent=2)
 
 
+# ── Response cleaning ───────────────────────────────────────────────────
+
+# Pattern to strip hallucinated raw function call syntax from LLM output
+_FUNCTION_TAG_RE = re.compile(
+    r'<function=\w+>.*?</function>',
+    re.DOTALL,
+)
+_FUNCTION_BLOCK_RE = re.compile(
+    r'```(?:json)?\s*\{[^}]*"function"[^}]*\}\s*```',
+    re.DOTALL,
+)
+
+
+def _clean_response(text: str) -> str:
+    """Strip hallucinated function-call syntax from LLM responses."""
+    if not text:
+        return text
+    text = _FUNCTION_TAG_RE.sub('', text)
+    text = _FUNCTION_BLOCK_RE.sub('', text)
+    # Also strip any leftover <function> fragments
+    text = re.sub(r'</?function[^>]*>', '', text)
+    # Clean up excessive whitespace from removals
+    text = re.sub(r'\n{3,}', '\n\n', text).strip()
+    return text if text else "No anomalies or security concerns detected at this time."
+
+
 # ── Main assistant entry point ──────────────────────────────────────────
 
 SYSTEM_PROMPT = """You are VenueFlow Ops Assistant — an AI analyst for stadium operations staff.
 You have access to live venue monitoring tools. Use them to answer questions accurately.
 Be concise, data-driven, and actionable. Format numbers clearly.
 If you see concerning patterns, proactively flag them.
-Always call at least one tool to get current data before answering."""
+Always call at least one tool to get current data before answering.
+
+IMPORTANT: You MUST ONLY use the tools provided via the tool_calls mechanism.
+NEVER output raw function call syntax like <function=...> in your text responses.
+Just write your analysis in plain text with bullet points and numbers."""
 
 
 def handle_staff_query(query: str, minute: int) -> str:
@@ -144,10 +175,10 @@ def handle_staff_query(query: str, minute: int) -> str:
 
             # Get final response with tool results
             final = chat(messages, temperature=0.5, max_tokens=512)
-            return final
+            return _clean_response(final)
 
         # Model answered directly without tools
-        return msg.content or "No response generated."
+        return _clean_response(msg.content or "No response generated.")
 
     # ── Fallback: simple context injection ──────────────────────────────
     densities = get_density(minute)
@@ -167,4 +198,4 @@ def handle_staff_query(query: str, minute: int) -> str:
             ),
         },
     ]
-    return chat(fallback_messages, temperature=0.5, max_tokens=512)
+    return _clean_response(chat(fallback_messages, temperature=0.5, max_tokens=512))

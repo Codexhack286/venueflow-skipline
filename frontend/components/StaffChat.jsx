@@ -22,8 +22,16 @@ const QUICK_ACTIONS = [
  */
 function FormattedMessage({ text }) {
   if (!text) return null;
+  // Strip any raw function call syntax the LLM might hallucinate
+  const cleaned = text
+    .replace(/<function=\w+>[\s\S]*?<\/function>/g, "")
+    .replace(/<\/?function[^>]*>/g, "")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
 
-  const lines = text.split("\n");
+  if (!cleaned) return <span className="text-slate-500 italic">No issues detected.</span>;
+
+  const lines = cleaned.split("\n");
   const elements = [];
 
   lines.forEach((line, lineIdx) => {
