@@ -152,10 +152,10 @@ export default function DashboardPage() {
             <button
               key={s}
               onClick={() => setSpeed(s)}
-              className={`text-[10px] px-2 py-1 rounded-md transition-colors ${
+              className={`text-[10px] px-2 py-1 rounded-md transition-all ${
                 speed === s
-                  ? "bg-blue-600/30 text-blue-300"
-                  : "bg-slate-800/30 text-slate-500 hover:text-slate-300"
+                  ? "bg-blue-600 text-white font-bold ring-1 ring-blue-400/50 shadow-md shadow-blue-900/50"
+                  : "bg-slate-800/30 text-slate-500 hover:text-slate-300 hover:bg-slate-700/50"
               }`}
             >
               {s}x

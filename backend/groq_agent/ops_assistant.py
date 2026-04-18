@@ -122,6 +122,7 @@ Always call at least one tool to get current data before answering.
 
 IMPORTANT: You MUST ONLY use the tools provided via the tool_calls mechanism.
 NEVER output raw function call syntax like <function=...> in your text responses.
+NEVER output template placeholders (e.g., [Insert Event Type], [Insert Crowd Density]). If no data is available for a metric, simply state that. 
 Just write your analysis in plain text with bullet points and numbers."""
 
 
