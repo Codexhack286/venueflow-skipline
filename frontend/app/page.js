@@ -104,7 +104,7 @@ export default function DashboardPage() {
   const avgWait = waitTimes.length ? totalWait / waitTimes.length : 0;
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden">
+    <div className="flex flex-col min-h-screen lg:h-screen lg:overflow-hidden bg-slate-950 overflow-y-auto pb-6">
       {/* ── Header ─────────────────────────────────────────────── */}
       <header className="shrink-0 px-4 py-3 flex items-center justify-between border-b border-slate-800/50">
         <div className="flex items-center gap-3">
@@ -136,7 +136,7 @@ export default function DashboardPage() {
       </header>
 
       {/* ── Event Timeline Controls ────────────────────────────── */}
-      <div className="shrink-0 px-4 py-2.5 glass-card-sm mx-3 mt-2 rounded-xl flex items-center gap-4">
+      <div className="shrink-0 px-4 py-3 glass-card-sm mx-3 mt-2 rounded-xl flex flex-col md:flex-row md:items-center gap-4">
         {/* Play/Pause */}
         <button
           onClick={() => setPlaying(!playing)}
@@ -194,7 +194,7 @@ export default function DashboardPage() {
       </div>
 
       {/* ── Stats Bar ──────────────────────────────────────────── */}
-      <div className="shrink-0 grid grid-cols-4 gap-2 px-3 mt-2">
+      <div className="shrink-0 grid grid-cols-2 lg:grid-cols-4 gap-2 px-3 mt-2">
         {[
           { label: "Avg Density", value: `${Math.round(avgDensity * 100)}%`, color: getPhaseColor(minute) },
           { label: "Active Surges", value: surges.length, color: surges.length > 0 ? "#EF4444" : "#22C55E" },
@@ -209,10 +209,10 @@ export default function DashboardPage() {
       </div>
 
       {/* ── Main Content ───────────────────────────────────────── */}
-      <div className="flex-1 grid grid-cols-5 gap-3 p-3 min-h-0">
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-5 gap-3 p-3 lg:min-h-0">
         {/* Left: Heatmap (3 cols) */}
-        <div className="col-span-3 glass-card p-4 flex flex-col min-h-0">
-          <h2 className="text-sm font-semibold text-white mb-2 flex items-center gap-2">
+        <div className="lg:col-span-3 glass-card p-4 flex flex-col min-h-[400px] lg:min-h-0">
+          <h2 className="text-sm font-semibold text-white mb-2 flex items-center gap-2 shrink-0">
             <span>🏟️</span> Live Stadium Heatmap
             {anomalies.length > 0 && (
               <span className="text-[10px] px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 animate-pulse">
@@ -232,10 +232,10 @@ export default function DashboardPage() {
         </div>
 
         {/* Right: Alerts + Chat (2 cols) */}
-        <div className="col-span-2 flex flex-col gap-3 min-h-0">
+        <div className="lg:col-span-2 flex flex-col gap-3 min-h-0">
           {/* Alerts */}
-          <div className="glass-card p-4 flex flex-col min-h-0" style={{ flex: "0 0 45%" }}>
-            <h2 className="text-sm font-semibold text-white mb-2 flex items-center gap-2">
+          <div className="glass-card p-4 flex flex-col min-h-[300px] lg:min-h-0" style={{ flex: "0 0 auto", "@media (min-width: 1024px)": { flex: "0 0 45%" } }}>
+            <h2 className="text-sm font-semibold text-white mb-2 flex items-center gap-2 shrink-0">
               <span>⚡</span> SkipLine Alerts
               {alerts.length > 0 && (
                 <span className="text-[10px] px-2 py-0.5 rounded-full bg-orange-500/20 text-orange-400">
@@ -252,8 +252,8 @@ export default function DashboardPage() {
           </div>
 
           {/* Chat */}
-          <div className="glass-card p-4 flex flex-col min-h-0 flex-1">
-            <h2 className="text-sm font-semibold text-white mb-2 flex items-center gap-2">
+          <div className="glass-card p-4 flex flex-col min-h-[400px] lg:min-h-0 flex-1">
+            <h2 className="text-sm font-semibold text-white mb-2 flex items-center gap-2 shrink-0">
               <span>🤖</span> Ops Assistant
               <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400">
                 Agentic AI

@@ -113,15 +113,19 @@ export default function AttendeePage() {
         )}
 
         {tab === "map" && (
-          <div className="glass-card p-3">
-            <h3 className="text-sm font-semibold text-white mb-2">Live Crowd Map</h3>
-            <StadiumHeatmap
-              zones={zones}
-              densities={densities}
-              surges={[]}
-              waitTimes={waitTimes}
-              anomalies={[]}
-            />
+          <div className="glass-card p-3 flex flex-col h-[600px] sm:h-auto">
+            <h3 className="text-sm font-semibold text-white mb-2 shrink-0">Live Crowd Map</h3>
+            <div className="flex-1 overflow-x-auto overflow-y-hidden rounded-xl bg-slate-900/40">
+              <div className="min-w-[600px] h-full flex items-center justify-center p-4">
+                <StadiumHeatmap
+                  zones={zones}
+                  densities={densities}
+                  surges={[]}
+                  waitTimes={waitTimes}
+                  anomalies={[]}
+                />
+              </div>
+            </div>
           </div>
         )}
 
