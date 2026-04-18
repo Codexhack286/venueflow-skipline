@@ -125,19 +125,23 @@ NEVER output raw function call syntax like <function=...> in your text responses
 Just write your analysis in plain text with bullet points and numbers."""
 
 
-def handle_staff_query(query: str, minute: int) -> str:
+def handle_staff_query(query: str, minute: int) -> dict:
     """
     Handle a staff query using agentic tool calling.
 
     The LLM decides which tools to call based on the question,
     receives the results, and synthesizes a response.
 
+    Returns a dict with 'response', 'tools_used', and 'tool_results'.
     Falls back to simple context injection if tool calling is unavailable.
     """
     messages = [
         {"role": "system", "content": SYSTEM_PROMPT},
         {"role": "user", "content": f"[Current event time: minute {minute}/240]\n\n{query}"},
     ]
+
+    tools_used = []
+    tool_results = {}
 
     # Try agentic tool calling first
     response = chat_with_tools(messages, TOOLS)
@@ -166,7 +170,10 @@ def handle_staff_query(query: str, minute: int) -> str:
 
             # Execute each tool and add results
             for tc in msg.tool_calls:
-                result = _execute_tool(tc.function.name, minute)
+                tool_name = tc.function.name
+                tools_used.append(tool_name)
+                result = _execute_tool(tool_name, minute)
+                tool_results[tool_name] = json.loads(result)
                 messages.append({
                     "role": "tool",
                     "tool_call_id": tc.id,
@@ -175,10 +182,18 @@ def handle_staff_query(query: str, minute: int) -> str:
 
             # Get final response with tool results
             final = chat(messages, temperature=0.5, max_tokens=512)
-            return _clean_response(final)
+            return {
+                "response": _clean_response(final),
+                "tools_used": tools_used,
+                "tool_results": tool_results,
+            }
 
         # Model answered directly without tools
-        return _clean_response(msg.content or "No response generated.")
+        return {
+            "response": _clean_response(msg.content or "No response generated."),
+            "tools_used": [],
+            "tool_results": {},
+        }
 
     # ── Fallback: simple context injection ──────────────────────────────
     densities = get_density(minute)
@@ -198,4 +213,8 @@ def handle_staff_query(query: str, minute: int) -> str:
             ),
         },
     ]
-    return _clean_response(chat(fallback_messages, temperature=0.5, max_tokens=512))
+    return {
+        "response": _clean_response(chat(fallback_messages, temperature=0.5, max_tokens=512)),
+        "tools_used": ["fallback"],
+        "tool_results": {},
+    }

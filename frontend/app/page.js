@@ -104,7 +104,7 @@ export default function DashboardPage() {
   const avgWait = waitTimes.length ? totalWait / waitTimes.length : 0;
 
   return (
-    <div className="flex flex-col min-h-screen lg:h-screen lg:overflow-hidden bg-slate-950 overflow-y-auto pb-6">
+    <div className="flex flex-col min-h-screen bg-slate-950 pb-6">
       {/* ── Header ─────────────────────────────────────────────── */}
       <header className="shrink-0 px-4 py-3 flex items-center justify-between border-b border-slate-800/50">
         <div className="flex items-center gap-3">
@@ -232,9 +232,9 @@ export default function DashboardPage() {
         </div>
 
         {/* Right: Alerts + Chat (2 cols) */}
-        <div className="lg:col-span-2 flex flex-col gap-3 min-h-0">
+        <div className="lg:col-span-2 flex flex-col gap-3">
           {/* Alerts */}
-          <div className="glass-card p-4 flex flex-col min-h-[300px] lg:min-h-0" style={{ flex: "0 0 auto", "@media (min-width: 1024px)": { flex: "0 0 45%" } }}>
+          <div className="glass-card p-4 flex flex-col min-h-[300px] lg:h-[45%]">
             <h2 className="text-sm font-semibold text-white mb-2 flex items-center gap-2 shrink-0">
               <span>⚡</span> SkipLine Alerts
               {alerts.length > 0 && (
@@ -243,7 +243,7 @@ export default function DashboardPage() {
                 </span>
               )}
             </h2>
-            <div className="flex-1 min-h-0 overflow-hidden">
+            <div className="flex-1 overflow-hidden">
               <SkipLineAlert
                 alerts={alerts}
                 onPreOrder={() => window.open("/attendee", "_blank")}
@@ -252,7 +252,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Chat */}
-          <div className="glass-card p-4 flex flex-col min-h-[400px] lg:min-h-0 flex-1">
+          <div className="glass-card p-4 flex flex-col min-h-[400px] lg:flex-1">
             <h2 className="text-sm font-semibold text-white mb-2 flex items-center gap-2 shrink-0">
               <span>🤖</span> Ops Assistant
               <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400">

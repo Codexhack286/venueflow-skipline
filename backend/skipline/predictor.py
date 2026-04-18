@@ -6,6 +6,12 @@ that are likely to become overcrowded in the next 5-10 minutes.
 
 from simulation.engine import get_density_history, get_density
 from simulation.zones import get_zones, get_zone_by_id
+from config import (
+    SURGE_HISTORY_WINDOW,
+    SURGE_SLOPE_THRESHOLD,
+    SURGE_DENSITY_THRESHOLD,
+    SURGE_CONFIDENCE_CRITICAL_THRESHOLD,
+)
 
 
 def predict_surges(minute: int, seed: int = 42) -> list:
@@ -13,9 +19,9 @@ def predict_surges(minute: int, seed: int = 42) -> list:
     Predict which zones will surge in the next 5-10 minutes.
 
     Logic:
-      1. Get density history for the last 5 minutes
+      1. Get density history for the last N minutes
       2. Calculate rate of increase (slope)
-      3. Flag zones where: slope > 0.02/min AND current density > 0.55
+      3. Flag zones where: slope > SURGE_SLOPE_THRESHOLD AND current density > SURGE_DENSITY_THRESHOLD
 
     Args:
         minute: Current event minute.
@@ -24,7 +30,7 @@ def predict_surges(minute: int, seed: int = 42) -> list:
     Returns:
         List of surge prediction dicts.
     """
-    history = get_density_history(minute, window=5, seed=seed)
+    history = get_density_history(minute, window=SURGE_HISTORY_WINDOW, seed=seed)
     current = get_density(minute, seed=seed)
     zones = get_zones()
     surges = []
@@ -47,7 +53,7 @@ def predict_surges(minute: int, seed: int = 42) -> list:
         slope = numerator / denominator if denominator != 0 else 0
 
         # Surge condition: rising fast + already moderately crowded
-        if slope > 0.02 and curr_density > 0.55:
+        if slope > SURGE_SLOPE_THRESHOLD and curr_density > SURGE_DENSITY_THRESHOLD:
             # Confidence based on how strong the trend is
             confidence = min(1.0, (slope / 0.05) * (curr_density / 0.8))
 
@@ -65,7 +71,7 @@ def predict_surges(minute: int, seed: int = 42) -> list:
                 "trend_slope": round(slope, 4),
                 "confidence": round(confidence, 2),
                 "estimated_minutes_to_peak": mins_to_90,
-                "severity": "critical" if confidence > 0.7 else "warning",
+                "severity": "critical" if confidence > SURGE_CONFIDENCE_CRITICAL_THRESHOLD else "warning",
             })
 
     # Sort by confidence descending

@@ -136,10 +136,12 @@ export default function StaffChat({ minute = 60 }) {
       role: "assistant",
       content:
         "👋 I'm VenueFlow Ops Assistant. I can query live sensor data, check surge predictions, estimate wait times, and flag anomalies. Ask me anything about venue operations!",
+      tools_used: [],
     },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [expandedToolIndex, setExpandedToolIndex] = useState(null);
   const scrollRef = useRef(null);
 
   useEffect(() => {
@@ -160,7 +162,12 @@ export default function StaffChat({ minute = 60 }) {
       const data = await sendChat(userMessage, minute);
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: data.response },
+        {
+          role: "assistant",
+          content: data.response,
+          tools_used: data.tools_used || [],
+          tool_results: data.tool_results || {},
+        },
       ]);
     } catch {
       setMessages((prev) => [
@@ -168,6 +175,7 @@ export default function StaffChat({ minute = 60 }) {
         {
           role: "assistant",
           content: "⚠️ Unable to reach the backend. Make sure the FastAPI server is running on port 8000 and your GROQ_API_KEY is set.",
+          tools_used: [],
         },
       ]);
     } finally {
@@ -175,28 +183,82 @@ export default function StaffChat({ minute = 60 }) {
     }
   };
 
+  const toolDescriptions = {
+    get_zone_density: "Queried current crowd density across all zones",
+    get_surge_predictions: "Checked for upcoming surge predictions",
+    get_wait_times: "Retrieved concession wait time estimates",
+    get_anomalies: "Scanned for anomalies and security concerns",
+    fallback: "Used fallback context injection (API key unavailable)",
+  };
+
   return (
     <div className="flex flex-col h-full">
       {/* Messages */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto space-y-3 mb-3 pr-1 min-h-0">
         {messages.map((msg, i) => (
-          <div
-            key={i}
-            className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"} animate-fade-in-up`}
-          >
+          <div key={i}>
             <div
-              className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
-                msg.role === "user"
-                  ? "bg-blue-600/30 text-blue-100 rounded-br-md"
-                  : "glass-card-sm text-slate-300 rounded-bl-md"
-              }`}
+              className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"} animate-fade-in-up`}
             >
-              {msg.role === "assistant" ? (
-                <FormattedMessage text={msg.content} />
-              ) : (
-                msg.content
-              )}
+              <div
+                className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
+                  msg.role === "user"
+                    ? "bg-blue-600/30 text-blue-100 rounded-br-md"
+                    : "glass-card-sm text-slate-300 rounded-bl-md"
+                }`}
+              >
+                {msg.role === "assistant" ? (
+                  <FormattedMessage text={msg.content} />
+                ) : (
+                  msg.content
+                )}
+              </div>
             </div>
+
+            {/* Tool Invocation Tracker */}
+            {msg.role === "assistant" && msg.tools_used && msg.tools_used.length > 0 && (
+              <div className="mt-2 ml-0 flex justify-start animate-fade-in-up">
+                <div className="max-w-[85%] bg-slate-900/60 border border-slate-700/40 rounded-lg p-2 text-[11px] space-y-1">
+                  <div className="text-slate-400 font-semibold">🔧 Tools Used:</div>
+                  {msg.tools_used.map((toolName, toolIdx) => (
+                    <div
+                      key={toolIdx}
+                      className="space-y-1"
+                    >
+                      <button
+                        onClick={() =>
+                          setExpandedToolIndex(
+                            expandedToolIndex === `${i}-${toolIdx}` ? null : `${i}-${toolIdx}`
+                          )
+                        }
+                        className="w-full text-left flex items-center gap-1.5 px-2 py-1 rounded hover:bg-slate-800/50 transition-colors text-slate-300 hover:text-white"
+                      >
+                        <span className="text-[9px]">
+                          {expandedToolIndex === `${i}-${toolIdx}` ? "▼" : "▶"}
+                        </span>
+                        <span className="text-blue-400 font-mono text-[10px]">
+                          {toolName}
+                        </span>
+                        <span className="text-slate-500 ml-auto text-[10px]">
+                          {toolDescriptions[toolName] || toolName}
+                        </span>
+                      </button>
+
+                      {/* Expanded tool results */}
+                      {expandedToolIndex === `${i}-${toolIdx}` && msg.tool_results[toolName] && (
+                        <div className="ml-4 p-2 bg-slate-950/50 rounded border border-slate-700/20 max-h-48 overflow-y-auto font-mono text-slate-400 text-[9px] space-y-1">
+                          <pre className="whitespace-pre-wrap break-words">
+                            {JSON.stringify(msg.tool_results[toolName], null, 2).substring(0, 800)}
+                            {JSON.stringify(msg.tool_results[toolName], null, 2).length > 800 &&
+                              "\n... (truncated)"}
+                          </pre>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         ))}
 

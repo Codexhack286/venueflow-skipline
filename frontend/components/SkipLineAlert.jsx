@@ -54,7 +54,7 @@ export default function SkipLineAlert({ alerts = [], onPreOrder }) {
   }
 
   return (
-    <div className="space-y-2 overflow-y-auto max-h-[280px] pr-1">
+    <div className="space-y-2 overflow-y-auto h-full pr-1">
       {visibleAlerts.map((alert, i) => {
         const key = `${alert.zone_id}-${alert.title}`;
         const isOut = animatingOut.has(key);

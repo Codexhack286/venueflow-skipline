@@ -15,7 +15,6 @@ os.environ["OPENBLAS_NUM_THREADS"] = "1"
 os.environ["MKL_NUM_THREADS"] = "1"
 os.environ["VECLIB_MAXIMUM_THREADS"] = "1"
 os.environ["NUMEXPR_NUM_THREADS"] = "1"
-os.environ["JOBLIB_START_METHOD"] = "forkserver"
 
 # Suppress noisy sklearn parallel warnings in production logs
 warnings.filterwarnings("ignore", category=UserWarning, module="sklearn")
@@ -23,6 +22,12 @@ warnings.filterwarnings("ignore", category=UserWarning, module="sklearn")
 from sklearn.ensemble import IsolationForest
 from simulation.engine import get_density, EVENT_DURATION
 from simulation.zones import get_zones
+from config import (
+    ANOMALY_CONTAMINATION,
+    ANOMALY_N_ESTIMATORS,
+    ANOMALY_CRITICAL_THRESHOLD,
+    ANOMALY_TRAINING_INTERVAL,
+)
 
 
 def _build_training_data():
@@ -34,7 +39,7 @@ def _build_training_data():
     zones = get_zones()
     data_by_type = {"gate": [], "concession": [], "seating": []}
 
-    for minute in range(0, EVENT_DURATION, 2):  # sample every 2 mins for speed
+    for minute in range(0, EVENT_DURATION, ANOMALY_TRAINING_INTERVAL):
         densities = get_density(minute, seed=42)
         for zone in zones:
             data_by_type[zone["type"]].append(
@@ -51,9 +56,9 @@ _TRAINING_DATA = _build_training_data()
 _MODELS = {}
 for _ztype, _data in _TRAINING_DATA.items():
     _model = IsolationForest(
-        contamination=0.05,  # expect ~5% anomalies
+        contamination=ANOMALY_CONTAMINATION,
         random_state=42,
-        n_estimators=50,
+        n_estimators=ANOMALY_N_ESTIMATORS,
         n_jobs=1,  # Force single thread to prevent Render container crash
     )
     _model.fit(_data)
@@ -86,7 +91,7 @@ def detect_anomalies(minute: int, densities: dict) -> list:
         prediction = model.predict(sample)[0]
 
         if prediction == -1:  # anomaly
-            severity = "critical" if score < -0.2 else "warning"
+            severity = "critical" if score < ANOMALY_CRITICAL_THRESHOLD else "warning"
             anomalies.append({
                 "zone_id": zid,
                 "zone_name": zone["name"],

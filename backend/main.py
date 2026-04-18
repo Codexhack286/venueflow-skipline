@@ -122,9 +122,17 @@ def api_anomalies(minute: int = Query(60, ge=0, le=239)):
 
 @app.post("/api/chat")
 def api_chat(req: ChatRequest):
-    """Staff ops assistant with agentic tool calling."""
-    response = handle_staff_query(req.message, req.minute)
-    return {"response": response}
+    """Staff ops assistant with agentic tool calling.
+    
+    Returns:
+        {
+            "response": str,
+            "tools_used": [str],
+            "tool_results": {tool_name: dict}
+        }
+    """
+    result = handle_staff_query(req.message, req.minute)
+    return result
 
 
 @app.post("/api/routing")

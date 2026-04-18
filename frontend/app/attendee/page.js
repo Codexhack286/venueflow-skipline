@@ -30,6 +30,7 @@ export default function AttendeePage() {
   const [waitTimes, setWaitTimes] = useState([]);
   const [zones, setZones] = useState([]);
   const [tab, setTab] = useState("order"); // order | map | alerts
+  const [showProductionModal, setShowProductionModal] = useState(false);
 
   useEffect(() => {
     fetchZones().then(setZones).catch(() => {});
@@ -77,7 +78,13 @@ export default function AttendeePage() {
             <p className="text-[9px] text-slate-500 -mt-0.5">Fan Experience</p>
           </div>
         </div>
-        <div className="text-xs text-slate-400 font-mono">{formatTime(minute)}</div>
+        <button
+          onClick={() => setShowProductionModal(true)}
+          className="text-[9px] px-2 py-1 rounded-full bg-slate-700/50 text-slate-400 hover:text-white hover:bg-slate-600/50 transition-colors"
+          title="Learn how this works in production"
+        >
+          🔬 Production Ready
+        </button>
       </header>
 
       {/* Tab bar */}
@@ -145,6 +152,80 @@ export default function AttendeePage() {
           ← Back to Dashboard
         </a>
       </div>
+
+      {/* Production Ready Modal */}
+      {showProductionModal && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 backdrop-blur-sm">
+          <div className="bg-slate-900 border border-slate-700 rounded-2xl p-6 max-w-sm max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-bold text-white">🔬 Production Ready Architecture</h2>
+              <button
+                onClick={() => setShowProductionModal(false)}
+                className="text-slate-400 hover:text-white text-xl"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="space-y-4 text-sm text-slate-300">
+              <div>
+                <h3 className="font-semibold text-white mb-2">🎯 Current Demo</h3>
+                <p className="text-[12px]">
+                  This is running on <strong>simulated crowd data</strong> using NumPy-based event modeling. The system is fully functional but uses mathematical models instead of real sensor data.
+                </p>
+              </div>
+
+              <div className="border-t border-slate-700 pt-4">
+                <h3 className="font-semibold text-white mb-2">📡 Production Data Sources</h3>
+                <div className="space-y-2 text-[12px]">
+                  <div>
+                    <strong>CCTV + Edge AI (YOLOv8):</strong>
+                    <p className="text-slate-400">NVIDIA Jetson devices at each stadium zone entrance running real-time person detection. Replaces: density simulation</p>
+                  </div>
+                  <div>
+                    <strong>WiFi/BLE Triangulation:</strong>
+                    <p className="text-slate-400">Passive smartphone tracking for zone-level density without requiring active apps. Replaces: gate/seating density estimation</p>
+                  </div>
+                  <div>
+                    <strong>Smart Turnstiles:</strong>
+                    <p className="text-slate-400">Exact in/out counts at all gates. Replaces: entry/exit surge prediction</p>
+                  </div>
+                  <div>
+                    <strong>POS Integration:</strong>
+                    <p className="text-slate-400">Real-time concession order data from stadium vendors. Replaces: Little's Law wait time estimation</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="border-t border-slate-700 pt-4">
+                <h3 className="font-semibold text-white mb-2">✅ What Would Stay the Same</h3>
+                <ul className="text-[12px] space-y-1 text-slate-400">
+                  <li>✓ ML Anomaly Detection (Isolation Forest)</li>
+                  <li>✓ Surge Prediction (sliding-window trend analysis)</li>
+                  <li>✓ Agentic LLM ops assistant (Groq function calling)</li>
+                  <li>✓ Pre-order & SkipLine flow</li>
+                  <li>✓ Real-time heatmap visualization</li>
+                  <li>✓ Smart routing with live data</li>
+                </ul>
+              </div>
+
+              <div className="border-t border-slate-700 pt-4">
+                <h3 className="font-semibold text-white mb-2">🏗️ System Advantage</h3>
+                <p className="text-[12px] text-slate-400">
+                  The backend is <strong>data-source agnostic</strong>. To switch from simulation to real sensors, only the density input module needs to change. All downstream logic (ML, surge prediction, LLM reasoning) remains identical.
+                </p>
+              </div>
+
+              <button
+                onClick={() => setShowProductionModal(false)}
+                className="w-full mt-4 py-2 rounded-lg bg-blue-600/30 text-blue-300 hover:bg-blue-600/40 font-semibold transition-colors text-[12px]"
+              >
+                Got it, impressive! 🚀
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

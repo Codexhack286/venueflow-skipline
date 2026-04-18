@@ -13,14 +13,7 @@ service rate per concession stand.
 """
 
 from simulation.zones import get_zones_by_type
-
-
-# Average service rate: people served per minute per concession stand
-SERVICE_RATE = 12.0  # ~12 customers per minute (multi-register counter)
-
-# Only a fraction of people in the zone are actively queuing
-# (others are eating, browsing, or passing through)
-QUEUE_FRACTION = 0.30
+from config import SERVICE_RATE, QUEUE_FRACTION
 
 
 def estimate_wait_times(densities: dict) -> list:

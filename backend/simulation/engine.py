@@ -13,9 +13,7 @@ Patterns modeled:
 
 import numpy as np
 from simulation.zones import get_zones
-
-# Total event duration in minutes
-EVENT_DURATION = 240
+from config import EVENT_DURATION, DENSITY_NOISE_STD, ZONE_OFFSET_RANGE
 
 # Pre-compute density curves for each zone type at each minute
 # Using smooth sigmoid-like transitions between phases
@@ -91,8 +89,8 @@ def get_density(minute: int, seed: int = 42) -> dict:
         base = float(_BASE_CURVES[zone_type][minute])
 
         # Add per-zone variation so not all gates/concessions are identical
-        zone_offset = hash(zone["id"]) % 100 / 1000.0 - 0.05  # ±0.05
-        noise = rng.normal(0, 0.03)  # ~3% random noise
+        zone_offset = hash(zone["id"]) % 100 / 1000.0 - ZONE_OFFSET_RANGE
+        noise = rng.normal(0, DENSITY_NOISE_STD)
 
         density = np.clip(base + zone_offset + noise, 0.0, 1.0)
         densities[zone["id"]] = round(float(density), 4)
