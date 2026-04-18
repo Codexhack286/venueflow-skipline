@@ -5,8 +5,17 @@ Lightweight implementation — trains on the simulation's own "normal" patterns,
 then flags zones whose current reading is anomalous for the current event phase.
 """
 
+import os
 import warnings
 import numpy as np
+
+# Force strict single-threaded execution to prevent Render container OOM crashes
+os.environ["OMP_NUM_THREADS"] = "1"
+os.environ["OPENBLAS_NUM_THREADS"] = "1"
+os.environ["MKL_NUM_THREADS"] = "1"
+os.environ["VECLIB_MAXIMUM_THREADS"] = "1"
+os.environ["NUMEXPR_NUM_THREADS"] = "1"
+os.environ["JOBLIB_START_METHOD"] = "forkserver"
 
 # Suppress noisy sklearn parallel warnings in production logs
 warnings.filterwarnings("ignore", category=UserWarning, module="sklearn")
@@ -45,6 +54,7 @@ for _ztype, _data in _TRAINING_DATA.items():
         contamination=0.05,  # expect ~5% anomalies
         random_state=42,
         n_estimators=50,
+        n_jobs=1,  # Force single thread to prevent Render container crash
     )
     _model.fit(_data)
     _MODELS[_ztype] = _model
