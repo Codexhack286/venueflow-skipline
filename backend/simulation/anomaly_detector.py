@@ -5,7 +5,12 @@ Lightweight implementation — trains on the simulation's own "normal" patterns,
 then flags zones whose current reading is anomalous for the current event phase.
 """
 
+import warnings
 import numpy as np
+
+# Suppress noisy sklearn parallel warnings in production logs
+warnings.filterwarnings("ignore", category=UserWarning, module="sklearn")
+
 from sklearn.ensemble import IsolationForest
 from simulation.engine import get_density, EVENT_DURATION
 from simulation.zones import get_zones
