@@ -3,8 +3,15 @@ VenueFlow + SkipLine — FastAPI Backend
 All API routes for the crowd management and concession pre-ordering system.
 """
 
-import json
+# ── MUST be first: suppress sklearn parallel warnings before any imports ──
+import warnings
 import os
+os.environ["PYTHONWARNINGS"] = "ignore::UserWarning"
+warnings.filterwarnings("ignore", category=UserWarning)
+warnings.filterwarnings("ignore", message=".*sklearn.*")
+warnings.filterwarnings("ignore", message=".*parallel.*")
+
+import json
 from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
