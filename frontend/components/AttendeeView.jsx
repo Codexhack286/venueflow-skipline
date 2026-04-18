@@ -6,6 +6,22 @@ import { fetchMenu, submitPreorder, getRouting } from "@/lib/api";
 /**
  * AttendeeView — Mobile-style pre-order UI with AI routing and menu.
  */
+
+const LOCATION_OPTIONS = [
+  { value: "Gate A (North)", label: "Gate A (North)" },
+  { value: "Gate B (East)", label: "Gate B (East)" },
+  { value: "Gate C (South)", label: "Gate C (South)" },
+  { value: "Gate D (West)", label: "Gate D (West)" },
+  { value: "Section North", label: "Section North" },
+  { value: "Section East", label: "Section East" },
+  { value: "Section South", label: "Section South" },
+  { value: "Section West", label: "Section West" },
+  { value: "Concession NE", label: "Food NE" },
+  { value: "Concession SE", label: "Food SE" },
+  { value: "Concession SW", label: "Food SW" },
+  { value: "Concession NW", label: "Food NW" },
+];
+
 export default function AttendeeView({ minute = 60, waitTimes = [], densities = {} }) {
   const [menu, setMenu] = useState([]);
   const [cart, setCart] = useState({});
@@ -14,17 +30,18 @@ export default function AttendeeView({ minute = 60, waitTimes = [], densities = 
   const [loadingRoute, setLoadingRoute] = useState(false);
   const [loadingOrder, setLoadingOrder] = useState(false);
   const [selectedZone, setSelectedZone] = useState("concession_1");
+  const [myLocation, setMyLocation] = useState("Gate A (North)");
 
   // Load menu
   useEffect(() => {
     fetchMenu().then(setMenu).catch(() => {});
   }, []);
 
-  // Get routing suggestion
+  // Get routing suggestion based on selected location
   const handleGetRouting = async () => {
     setLoadingRoute(true);
     try {
-      const data = await getRouting("main entrance", minute);
+      const data = await getRouting(myLocation, minute);
       setRouting(data.suggestion);
     } catch {
       setRouting("Unable to get routing suggestion. Check backend connection.");
@@ -85,13 +102,32 @@ export default function AttendeeView({ minute = 60, waitTimes = [], densities = 
             {loadingRoute ? "Thinking..." : "Get Route"}
           </button>
         </div>
+
+        {/* Location selector */}
+        <div className="mb-3">
+          <label className="text-[10px] text-slate-500 uppercase tracking-wider block mb-1">
+            I&apos;m currently near
+          </label>
+          <select
+            value={myLocation}
+            onChange={(e) => { setMyLocation(e.target.value); setRouting(""); }}
+            className="w-full bg-slate-800/60 border border-slate-700/50 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/40 appearance-none cursor-pointer"
+          >
+            {LOCATION_OPTIONS.map((loc) => (
+              <option key={loc.value} value={loc.value}>
+                📍 {loc.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
         {routing ? (
           <p className="text-sm text-slate-300 leading-relaxed animate-fade-in-up">
             {routing}
           </p>
         ) : (
           <p className="text-xs text-slate-500">
-            Tap &quot;Get Route&quot; for an AI-powered navigation suggestion based on live crowd data
+            Select your location and tap &quot;Get Route&quot; for an AI-powered suggestion
           </p>
         )}
       </div>
